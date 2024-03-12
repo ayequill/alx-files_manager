@@ -12,7 +12,6 @@ const URL = `mongodb://${HOST}:${PORT}`;
  * @method isAlive - Check if the client is connected to the DB
  * @method nbUsers - Get the number of users
  * @method nbFiles - Get the number of files
- * @example
  * const dbClient = new DBClient();
  * dbClient.isAlive();
  * dbClient.nbUsers();
@@ -21,7 +20,7 @@ const URL = `mongodb://${HOST}:${PORT}`;
 class DBClient {
   constructor() {
     this.client = new MongoClient(URL, { useUnifiedTopology: true });
-    this.client.connect();
+    this.client.connect(() => console.log(`Connected to the DB: ${URL}`));
     this.db = this.client.db(DATABASE);
     this.users = this.db.collection('users');
     this.files = this.db.collection('files');
@@ -32,11 +31,13 @@ class DBClient {
   }
 
   async nbUsers() {
-    return this.users.countDocuments();
+    const users = await this.users.countDocuments();
+    return users;
   }
 
   async nbFiles() {
-    return this.files.countDocuments();
+    const files = await this.files.countDocuments();
+    return files;
   }
 }
 
